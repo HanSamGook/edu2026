@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="ko" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>융합의 과학: 생각, 수학, 그리고 화학</title>
+    <!-- Tailwind CSS 로드 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Pretendard -->
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/variable/pretendardvariable.css" />
+    <!-- Font Awesome 아이콘 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Pretendard Variable"', 'Pretendard', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'Roboto', 'sans-serif'],
+                    },
+                    colors: {
+                        science: {
+                            900: '#0f172a',
+                            800: '#1e293b',
+                            accent: '#38bdf8',
+                            math: '#a78bfa',
+                            chem: '#10b981',
+                            thought: '#fcd34d'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            overflow-x: hidden;
+            font-family: 'Pretendard Variable', sans-serif;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* 스크롤 시 나타나는 애니메이션 클래스 */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease-out;
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* 카드 호버 효과 부드럽게 */
+        .theme-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+        }
+        
+        .theme-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .glow-text {
+            text-shadow: 0 0 10px rgba(56, 189, 248, 0.4);
+        }
+
+        /* 캔버스 배경 설정 */
+        #particle-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            opacity: 0.6;
+            pointer-events: none;
+        }
+        
+        #hero-section {
+            position: relative;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-science-accent selection:text-white bg-slate-50 text-slate-900 dark:bg-science-900 dark:text-slate-50 transition-colors duration-300">
+
+    <!-- Theme Toggle Button -->
+    <button id="theme-toggle" class="fixed top-6 right-6 z-50 w-12 h-12 rounded-full bg-white dark:bg-slate-800 shadow-[0_4px_20px_rgba(0,0,0,0.1)] dark:shadow-[0_4px_20px_rgba(0,0,0,0.4)] flex items-center justify-center hover:scale-110 transition-all border border-slate-200 dark:border-slate-700 focus:outline-none">
+        <i class="fas fa-sun hidden dark:block text-xl text-yellow-400"></i>
+        <i class="fas fa-moon block dark:hidden text-xl text-slate-600"></i>
+    </button>
+
+    <!-- Hero Section -->
+    <header id="hero-section" class="relative min-h-screen flex items-center justify-center overflow-hidden">
+        <canvas id="particle-canvas"></canvas>
+        
+        <div class="relative z-10 text-center px-4 max-w-4xl mx-auto">
+            <div class="inline-block mb-4 px-4 py-1.5 rounded-full border border-science-accent/30 bg-white/80 dark:bg-science-800/50 backdrop-blur-sm text-science-accent text-sm font-medium tracking-wide reveal shadow-sm dark:shadow-none">
+                화학 교사 OOO의 융합 교육 실험실
+            </div>
+            <h1 class="text-5xl md:text-7xl font-extrabold mb-6 leading-tight tracking-tight reveal text-slate-900 dark:text-white" style="transition-delay: 0.1s;">
+                보이지 않는 것을 <br>
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-science-thought via-science-math to-science-chem glow-text">
+                    이해하는 힘
+                </span>
+            </h1>
+            <p class="text-lg md:text-2xl text-slate-600 dark:text-slate-300 mb-10 max-w-2xl mx-auto font-light leading-relaxed reveal" style="transition-delay: 0.2s;">
+                유추를 통한 <span class="text-science-thought font-semibold">생각의 탄생</span>,<br class="hidden md:block">우주를 서술하는 언어 <span class="text-science-math font-semibold">수학</span>,<br class="hidden md:block">그리고 물질의 본질을 탐구하는 <span class="text-science-chem font-semibold">화학</span>의 만남.
+            </p>
+            <div class="reveal" style="transition-delay: 0.3s;">
+                <a href="#explore" class="group relative inline-flex items-center justify-center px-8 py-4 text-base font-bold text-white transition-all duration-200 bg-science-accent border border-transparent rounded-full hover:bg-sky-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500 hover:shadow-[0_0_20px_rgba(56,189,248,0.4)]">
+                    탐구 시작하기
+                    <i class="fas fa-arrow-down ml-2 group-hover:translate-y-1 transition-transform"></i>
+                </a>
+            </div>
+        </div>
+        
+        <!-- 스크롤 유도 화살표 -->
+        <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce text-slate-400 dark:text-slate-500 z-10">
+            <i class="fas fa-chevron-down text-2xl"></i>
+        </div>
+    </header>
+
+    <!-- Main Content Section -->
+    <main id="explore" class="relative z-10 bg-slate-100 dark:bg-science-900 py-24 transition-colors duration-300">
+        
+        <!-- Section Intro -->
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-20 text-center reveal">
+            <h2 class="text-3xl md:text-5xl font-bold mb-6 text-slate-900 dark:text-white">세상을 바라보는 세 가지 렌즈</h2>
+            <div class="w-24 h-1 bg-gradient-to-r from-science-thought via-science-math to-science-chem mx-auto rounded-full"></div>
+        </div>
+
+        <!-- The Three Pillars -->
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+                
+                <!-- Card 1: 생각의 탄생 -->
+                <div class="theme-card bg-white dark:bg-science-800 rounded-3xl p-8 border border-slate-200 dark:border-slate-700 hover:border-science-thought/50 dark:hover:border-science-thought/50 relative overflow-hidden group reveal shadow-lg dark:shadow-none">
+                    <div class="absolute top-0 right-0 -mt-4 -mr-4 w-32 h-32 bg-science-thought/10 rounded-full blur-2xl group-hover:bg-science-thought/20 transition-all"></div>
+                    <div class="w-16 h-16 bg-slate-50 dark:bg-slate-900 rounded-2xl flex items-center justify-center mb-6 shadow-md dark:shadow-lg border border-slate-100 dark:border-slate-700 text-science-thought">
+                        <i class="fas fa-brain text-3xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 text-slate-900 dark:text-white">생각의 탄생</h3>
+                    <p class="text-slate-600 dark:text-slate-400 leading-relaxed mb-6 font-light">
+                        모든 위대한 발견은 "왜?"라는 작은 질문에서 시작됩니다. 철학적 사유와 논리적 추론은 미지의 세계를 탐험하기 위한 나침반이 됩니다. 지식 이전에, 생각하는 힘을 기릅니다.
+                    </p>
+                    <ul class="text-sm text-slate-500 dark:text-slate-300 space-y-2">
+                        <li><i class="fas fa-check text-science-thought mr-2"></i> 비판적 사고방식</li>
+                        <li><i class="fas fa-check text-science-thought mr-2"></i> 가설의 설정과 검증</li>
+                        <li><i class="fas fa-check text-science-thought mr-2"></i> 철학적 탐구</li>
+                    </ul>
+                </div>
+
+                <!-- Card 2: 수학 -->
+                <div class="theme-card bg-white dark:bg-science-800 rounded-3xl p-8 border border-slate-200 dark:border-slate-700 hover:border-science-math/50 dark:hover:border-science-math/50 relative overflow-hidden group reveal shadow-lg dark:shadow-none" style="transition-delay: 0.2s;">
+                    <div class="absolute top-0 right-0 -mt-4 -mr-4 w-32 h-32 bg-science-math/10 rounded-full blur-2xl group-hover:bg-science-math/20 transition-all"></div>
+                    <div class="w-16 h-16 bg-slate-50 dark:bg-slate-900 rounded-2xl flex items-center justify-center mb-6 shadow-md dark:shadow-lg border border-slate-100 dark:border-slate-700 text-science-math">
+                        <i class="fas fa-infinity text-3xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 text-slate-900 dark:text-white">수학</h3>
+                    <p class="text-slate-600 dark:text-slate-400 leading-relaxed mb-6 font-light">
+                        수학은 우주가 쓰여진 언어입니다. 불규칙해 보이는 자연 현상 속에서 변하지 않는 완벽한 패턴과 규칙을 찾아내고, 이를 명확한 수식으로 표현합니다.
+                    </p>
+                    <ul class="text-sm text-slate-500 dark:text-slate-300 space-y-2">
+                        <li><i class="fas fa-check text-science-math mr-2"></i> 논리와 패턴의 이해</li>
+                        <li><i class="fas fa-check text-science-math mr-2"></i> 정량적 분석 능력</li>
+                        <li><i class="fas fa-check text-science-math mr-2"></i> 추상적 개념의 시각화</li>
+                    </ul>
+                </div>
+
+                <!-- Card 3: 화학 -->
+                <div class="theme-card bg-white dark:bg-science-800 rounded-3xl p-8 border border-slate-200 dark:border-slate-700 hover:border-science-chem/50 dark:hover:border-science-chem/50 relative overflow-hidden group reveal shadow-lg dark:shadow-none" style="transition-delay: 0.4s;">
+                    <div class="absolute top-0 right-0 -mt-4 -mr-4 w-32 h-32 bg-science-chem/10 rounded-full blur-2xl group-hover:bg-science-chem/20 transition-all"></div>
+                    <div class="w-16 h-16 bg-slate-50 dark:bg-slate-900 rounded-2xl flex items-center justify-center mb-6 shadow-md dark:shadow-lg border border-slate-100 dark:border-slate-700 text-science-chem">
+                        <i class="fas fa-flask text-3xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 text-slate-900 dark:text-white">화학</h3>
+                    <p class="text-slate-600 dark:text-slate-400 leading-relaxed mb-6 font-light">
+                        눈에 보이지 않는 원자와 분자들의 아름다운 춤사위. 화학은 물질의 본질을 이해하고, 상호작용을 통해 새로운 가치를 창조해내는 변화와 융합의 마법입니다.
+                    </p>
+                    <ul class="text-sm text-slate-500 dark:text-slate-300 space-y-2">
+                        <li><i class="fas fa-check text-science-chem mr-2"></i> 미시 세계의 이해</li>
+                        <li><i class="fas fa-check text-science-chem mr-2"></i> 화학 결합과 반응</li>
+                        <li><i class="fas fa-check text-science-chem mr-2"></i> 물질의 성질과 변화</li>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- Interactive Interactive Experiment Section -->
+    <section class="py-24 bg-white dark:bg-slate-900 relative border-t border-slate-200 dark:border-slate-800 transition-colors duration-300">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center reveal">
+            <h2 class="text-3xl font-bold mb-8 text-slate-900 dark:text-white">지식의 결합 실험</h2>
+            <p class="text-slate-500 dark:text-slate-400 mb-12">각 요소를 클릭하여 상호작용이 어떻게 일어나는지 확인해보세요. (마우스로 화면 클릭/터치)</p>
+            
+            <div class="bg-slate-50 dark:bg-science-800/50 rounded-3xl p-8 md:p-12 border border-slate-200 dark:border-slate-700 backdrop-blur-md shadow-xl dark:shadow-none transition-colors duration-300">
+                <div class="flex flex-col md:flex-row items-center justify-center space-y-8 md:space-y-0 md:space-x-12">
+                    
+                    <div class="flex flex-col items-center">
+                        <button onclick="createReaction('thought')" class="w-24 h-24 rounded-full bg-white dark:bg-slate-800 border-2 border-science-thought flex items-center justify-center text-science-thought hover:bg-science-thought hover:text-white dark:hover:text-slate-900 transition-all shadow-[0_0_15px_rgba(252,211,77,0.2)] hover:shadow-[0_0_25px_rgba(252,211,77,0.5)] transform hover:scale-110 active:scale-95">
+                            <i class="fas fa-lightbulb text-3xl"></i>
+                        </button>
+                        <span class="mt-4 font-semibold text-slate-700 dark:text-slate-300">생각 촉발</span>
+                    </div>
+
+                    <div class="text-slate-300 dark:text-slate-600 text-3xl font-light">
+                        <i class="fas fa-plus"></i>
+                    </div>
+
+                    <div class="flex flex-col items-center">
+                        <button onclick="createReaction('math')" class="w-24 h-24 rounded-full bg-white dark:bg-slate-800 border-2 border-science-math flex items-center justify-center text-science-math hover:bg-science-math hover:text-white dark:hover:text-slate-900 transition-all shadow-[0_0_15px_rgba(167,139,250,0.2)] hover:shadow-[0_0_25px_rgba(167,139,250,0.5)] transform hover:scale-110 active:scale-95">
+                            <i class="fas fa-calculator text-3xl"></i>
+                        </button>
+                        <span class="mt-4 font-semibold text-slate-700 dark:text-slate-300">수학적 모델링</span>
+                    </div>
+
+                    <div class="text-slate-300 dark:text-slate-600 text-3xl font-light">
+                        <i class="fas fa-arrow-right"></i>
+                    </div>
+
+                    <div class="flex flex-col items-center">
+                        <button onclick="createReaction('chem')" class="w-28 h-28 rounded-full bg-white dark:bg-slate-800 border-2 border-science-chem flex items-center justify-center text-science-chem hover:bg-science-chem hover:text-white dark:hover:text-slate-900 transition-all shadow-[0_0_15px_rgba(16,185,129,0.2)] hover:shadow-[0_0_30px_rgba(16,185,129,0.6)] transform hover:scale-110 active:scale-95">
+                            <i class="fas fa-atom text-4xl"></i>
+                        </button>
+                        <span class="mt-4 font-semibold text-slate-700 dark:text-slate-300">화학적 발견</span>
+                    </div>
+
+                </div>
+                <div id="reaction-message" class="mt-10 h-10 text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-science-thought via-science-math to-science-chem transition-opacity duration-300 opacity-0">
+                    반응이 일어났습니다!
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-slate-100 dark:bg-slate-950 py-12 border-t border-slate-200 dark:border-slate-800 transition-colors duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center">
+            <div class="mb-6 md:mb-0 text-center md:text-left">
+                <span class="text-2xl font-bold tracking-tighter text-slate-800 dark:text-white">
+                    CHEM<span class="text-science-accent">.</span>EDU
+                </span>
+                <p class="text-slate-500 dark:text-slate-500 text-sm mt-2">질문하는 습관, 계산하는 논리, 증명하는 화학.</p>
+            </div>
+            <div class="flex space-x-6 text-slate-400 dark:text-slate-500">
+                <a href="#" class="hover:text-science-accent dark:hover:text-white transition-colors"><i class="fab fa-youtube text-xl"></i></a>
+                <a href="#" class="hover:text-science-accent dark:hover:text-white transition-colors"><i class="fas fa-envelope text-xl"></i></a>
+                <a href="#" class="hover:text-science-accent dark:hover:text-white transition-colors"><i class="fas fa-chalkboard-teacher text-xl"></i></a>
+            </div>
+        </div>
+        <div class="text-center text-slate-400 dark:text-slate-600 text-sm mt-8">
+            &copy; 2026 Chemistry Educator. All rights reserved.
+        </div>
+    </footer>
+
+    <!-- JavaScript 로직 -->
+    <script>
+        // --- 테마(다크/라이트 모드) 관리 로직 ---
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const htmlElement = document.documentElement;
+
+        // 초기 테마 설정 (localStorage 확인 또는 시스템 환경 설정)
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            htmlElement.classList.add('dark');
+        } else {
+            htmlElement.classList.remove('dark');
+        }
+
+        // 토글 버튼 클릭 이벤트
+        themeToggleBtn.addEventListener('click', () => {
+            htmlElement.classList.toggle('dark');
+            if (htmlElement.classList.contains('dark')) {
+                localStorage.setItem('theme', 'dark');
+            } else {
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+
+        // --- 스크롤 애니메이션 및 상호작용 로직 ---
+        document.addEventListener("DOMContentLoaded", () => {
+            const reveals = document.querySelectorAll(".reveal");
+
+            const revealOnScroll = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add("active");
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, {
+                threshold: 0.15,
+                rootMargin: "0px 0px -50px 0px"
+            });
+
+            reveals.forEach(reveal => {
+                revealOnScroll.observe(reveal);
+            });
+            
+            initCanvas();
+        });
+
+        function createReaction(type) {
+            const msgEl = document.getElementById('reaction-message');
+            msgEl.style.opacity = 0;
+            
+            setTimeout(() => {
+                if(type === 'thought') {
+                    msgEl.textContent = "새로운 가설이 세워졌습니다. (생각의 탄생)";
+                    msgEl.className = "mt-10 h-10 text-xl font-bold text-science-thought transition-opacity duration-300 opacity-100";
+                    burstParticles('#fcd34d');
+                } else if(type === 'math') {
+                    msgEl.textContent = "가설이 수식으로 증명되었습니다. (수학적 모델링)";
+                    msgEl.className = "mt-10 h-10 text-xl font-bold text-science-math transition-opacity duration-300 opacity-100";
+                    burstParticles('#a78bfa');
+                } else {
+                    msgEl.textContent = "새로운 물질이 합성되었습니다! (화학적 발견)";
+                    msgEl.className = "mt-10 h-10 text-2xl font-bold text-science-chem transition-opacity duration-300 opacity-100 glow-text";
+                    burstParticles('#10b981', true);
+                }
+            }, 300);
+        }
+
+        // --- 캔버스 배경 애니메이션 로직 ---
+        let canvas, ctx;
+        let particles = [];
+        const particleCount = 80;
+        let mouse = { x: null, y: null, radius: 150 };
+
+        function initCanvas() {
+            canvas = document.getElementById('particle-canvas');
+            ctx = canvas.getContext('2d');
+            
+            const hero = document.getElementById('hero-section');
+            
+            function resize() {
+                canvas.width = window.innerWidth;
+                canvas.height = hero.offsetHeight;
+            }
+            
+            window.addEventListener('resize', resize);
+            resize();
+
+            window.addEventListener('mousemove', (e) => {
+                if(e.y <= canvas.height) {
+                    mouse.x = e.x;
+                    mouse.y = e.y;
+                } else {
+                    mouse.x = undefined;
+                    mouse.y = undefined;
+                }
+            });
+
+            window.addEventListener('click', (e) => {
+                if(e.y <= canvas.height) {
+                    const colors = ['#fcd34d', '#a78bfa', '#10b981', '#38bdf8'];
+                    const color = colors[Math.floor(Math.random() * colors.length)];
+                    createExplosion(e.x, e.y, color);
+                }
+            });
+
+            class Particle {
+                constructor(x, y, dx, dy, size, color) {
+                    this.x = x;
+                    this.y = y;
+                    this.dx = dx;
+                    this.dy = dy;
+                    this.size = size;
+                    this.color = color;
+                    this.density = (Math.random() * 30) + 1;
+                }
+
+                draw() {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2, false);
+                    ctx.fillStyle = this.color;
+                    ctx.fill();
+                }
+
+                update() {
+                    if (this.x + this.size > canvas.width || this.x - this.size < 0) this.dx = -this.dx;
+                    if (this.y + this.size > canvas.height || this.y - this.size < 0) this.dy = -this.dy;
+
+                    if (mouse.x != null && mouse.y != null) {
+                        let dx = mouse.x - this.x;
+                        let dy = mouse.y - this.y;
+                        let distance = Math.sqrt(dx * dx + dy * dy);
+                        let forceDirectionX = dx / distance;
+                        let forceDirectionY = dy / distance;
+                        let force = (mouse.radius - distance) / mouse.radius;
+                        
+                        if (distance < mouse.radius) {
+                            this.x -= forceDirectionX * force * this.density;
+                            this.y -= forceDirectionY * force * this.density;
+                        }
+                    }
+
+                    this.x += this.dx;
+                    this.y += this.dy;
+                    this.draw();
+                }
+            }
+
+            function init() {
+                particles = [];
+                const colors = ['rgba(252, 211, 77, 0.8)', 'rgba(167, 139, 250, 0.8)', 'rgba(16, 185, 129, 0.8)', 'rgba(56, 189, 248, 0.8)'];
+                
+                for (let i = 0; i < particleCount; i++) {
+                    let size = (Math.random() * 2) + 1;
+                    let x = Math.random() * (innerWidth - size * 2) + size * 2;
+                    let y = Math.random() * (canvas.height - size * 2) + size * 2;
+                    let dx = (Math.random() - 0.5) * 1;
+                    let dy = (Math.random() - 0.5) * 1;
+                    let color = colors[Math.floor(Math.random() * colors.length)];
+                    particles.push(new Particle(x, y, dx, dy, size, color));
+                }
+            }
+
+            function connect() {
+                let opacityValue = 1;
+                // 현재 테마에 맞춰 선 색상 조절 (라이트 모드에서는 좀 더 진하게)
+                const isDark = htmlElement.classList.contains('dark');
+                const r = isDark ? 148 : 100;
+                const g = isDark ? 163 : 116;
+                const b = isDark ? 184 : 139;
+
+                for (let a = 0; a < particles.length; a++) {
+                    for (let b = a; b < particles.length; b++) {
+                        let distance = ((particles[a].x - particles[b].x) * (particles[a].x - particles[b].x))
+                                     + ((particles[a].y - particles[b].y) * (particles[a].y - particles[b].y));
+                        
+                        if (distance < (canvas.width / 10) * (canvas.height / 10)) {
+                            opacityValue = 1 - (distance / 15000);
+                            ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, ${opacityValue * 0.25})`;
+                            ctx.lineWidth = 1;
+                            ctx.beginPath();
+                            ctx.moveTo(particles[a].x, particles[a].y);
+                            ctx.lineTo(particles[b].x, particles[b].y);
+                            ctx.stroke();
+                        }
+                    }
+                }
+            }
+
+            function animate() {
+                requestAnimationFrame(animate);
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                for (let i = 0; i < particles.length; i++) {
+                    particles[i].update();
+                }
+                connect();
+            }
+
+            init();
+            animate();
+        }
+
+        function burstParticles(hexColor, mega = false) {
+            if(!canvas || !ctx) return;
+            const centerX = window.innerWidth / 2;
+            const centerY = Math.min(window.scrollY + window.innerHeight / 2, canvas.height);
+            createExplosion(centerX, centerY, hexColor, mega ? 50 : 20);
+        }
+
+        function createExplosion(x, y, color, amount = 15) {
+            for(let i=0; i<amount; i++) {
+                let size = (Math.random() * 3) + 1;
+                let dx = (Math.random() - 0.5) * 15;
+                let dy = (Math.random() - 0.5) * 15;
+                particles.push({
+                    x: x, y: y, dx: dx, dy: dy, size: size, color: color, density: 1,
+                    update: function() {
+                        this.x += this.dx;
+                        this.y += this.dy;
+                        this.dx *= 0.95;
+                        this.dy *= 0.95;
+                        ctx.beginPath();
+                        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2, false);
+                        ctx.fillStyle = this.color;
+                        ctx.fill();
+                    }
+                });
+            }
+            if(particles.length > 200) {
+                particles.splice(80, particles.length - 80);
+            }
+        }
+    </script>
+</body>
+</html>
